@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arisyn</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,200;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{--ink:#06080A;--ink2:#090C0F;--teal:#5ECFCC;--teal2:#4BBFBC;--w:#FFFFFF;--g:#8E8EA0;--dim:#252535;--b:rgba(255,255,255,0.055);--br:rgba(255,255,255,0.07);}
+html{scroll-behavior:smooth;}
+body{background:var(--ink);color:var(--w);font-family:'DM Sans',sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden;cursor:none;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='500' height='500' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5;}
+
+/* CURSOR */
+.cur{position:fixed;width:5px;height:5px;background:var(--teal);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+.cur-r{position:fixed;width:26px;height:26px;border:1px solid rgba(94,207,204,.3);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:32px 64px;display:flex;align-items:center;justify-content:space-between;transition:all .5s;}
+nav.s{background:rgba(6,8,10,.93);backdrop-filter:blur(40px);padding:20px 64px;border-bottom:1px solid var(--b);}
+.logo{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;letter-spacing:.16em;color:var(--w);text-decoration:none;cursor:pointer;}
+.logo i{color:var(--teal);font-style:normal;}
+.nl{display:flex;align-items:center;gap:36px;list-style:none;}
+.nl a{font-size:11px;color:var(--g);text-decoration:none;letter-spacing:.05em;transition:color .2s;cursor:pointer;}
+.nl a:hover,.nl a.active{color:var(--w);}
+.nc{background:var(--teal)!important;color:var(--ink)!important;padding:10px 24px;border-radius:2px;font-size:10px!important;font-weight:600!important;letter-spacing:.08em!important;transition:opacity .2s!important;}
+.nc:hover{opacity:.85!important;}
+
+/* PAGE SYSTEM */
+.page{display:none;min-height:100vh;}
+.page.active{display:block;}
+
+/* SHARED COMPONENTS */
+.s-eye{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--teal);text-transform:uppercase;display:block;margin-bottom:14px;}
+.s-h{font-family:'Syne',sans-serif;font-size:clamp(36px,5vw,60px);font-weight:800;letter-spacing:-.035em;line-height:1.0;}
+.s-sub{font-size:15px;color:var(--g);line-height:1.8;font-weight:300;max-width:520px;}
+.inner{max-width:1060px;margin:0 auto;padding:0 24px;}
+.sec{padding:120px 24px;}
+.b1{display:inline-block;padding:16px 40px;background:var(--w);color:var(--ink);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-decoration:none;border-radius:2px;transition:background .2s,transform .15s;cursor:pointer;border:none;}
+.b1:hover{background:#e2e2e2;transform:translateY(-2px);}
+.b2{display:inline-flex;align-items:center;gap:8px;padding:16px 32px;color:var(--g);font-size:11px;letter-spacing:.05em;text-decoration:none;border:1px solid var(--b);border-radius:2px;transition:color .2s,border-color .2s;cursor:pointer;background:none;}
+.b2:hover{color:var(--w);border-color:rgba(255,255,255,.15);}
+.bt{display:inline-block;padding:14px 32px;background:var(--teal);color:var(--ink);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-decoration:none;border-radius:2px;transition:background .2s;cursor:pointer;border:none;}
+.bt:hover{background:var(--teal2);}
+.card{padding:48px 40px;background:var(--ink2);border:1px solid var(--b);position:relative;overflow:hidden;transition:border-color .3s;}
+.card:hover{border-color:rgba(94,207,204,.16);}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent);opacity:0;transition:opacity .3s;}
+.card:hover::before{opacity:.4;}
+.card-eye{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--teal);text-transform:uppercase;display:block;margin-bottom:28px;}
+.card-h{font-family:'Syne',sans-serif;font-size:clamp(20px,2.5vw,26px);font-weight:700;letter-spacing:-.02em;margin-bottom:14px;line-height:1.15;}
+.card-p{font-size:13px;color:var(--g);line-height:1.85;font-weight:300;}
+.tag{display:inline-block;margin-top:28px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.18em;text-transform:uppercase;padding:6px 14px;border-radius:2px;background:rgba(94,207,204,.07);color:var(--teal);border:1px solid rgba(94,207,204,.14);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b);}
+.gc{background:var(--ink2);}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(20px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);}
+.rv.on{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.08s!important;}.d2{transition-delay:.16s!important;}.d3{transition-delay:.24s!important;}.d4{transition-delay:.32s!important;}
+
+/* TICKER */
+.tkr{padding:24px 0;border-top:1px solid var(--b);border-bottom:1px solid var(--b);overflow:hidden;}
+.ttr{display:flex;gap:80px;animation:tk 32s linear infinite;width:max-content;}
+.ti{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.24em;color:var(--dim);text-transform:uppercase;white-space:nowrap;display:flex;align-items:center;gap:20px;}
+.td{width:3px;height:3px;border-radius:50%;background:var(--teal);}
+
+/* HERO (HOME) */
+#home-hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 24px;position:relative;overflow:hidden;}
+#home-hero::after{content:'';position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:900px;height:700px;background:radial-gradient(ellipse,rgba(94,207,204,.045) 0%,transparent 60%);pointer-events:none;}
+.h-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.38em;color:var(--teal);text-transform:uppercase;margin-bottom:48px;opacity:0;animation:up .8s .15s ease forwards;}
+.h1{font-family:'Syne',sans-serif;font-size:clamp(72px,13vw,180px);font-weight:800;line-height:.88;letter-spacing:-.055em;opacity:0;animation:up 1s .35s cubic-bezier(.16,1,.3,1) forwards;}
+.h1e{font-family:'Syne',sans-serif;font-size:clamp(72px,13vw,180px);font-weight:200;font-style:italic;line-height:.88;letter-spacing:-.04em;color:var(--teal);margin-bottom:0;opacity:0;animation:up 1s .5s cubic-bezier(.16,1,.3,1) forwards;}
+.h-sub{font-size:clamp(14px,1.6vw,18px);color:var(--g);font-weight:300;max-width:480px;line-height:1.8;margin-top:clamp(32px,4vw,52px);margin-bottom:clamp(40px,5vw,56px);opacity:0;animation:up .8s .7s ease forwards;}
+.h-sub b{color:rgba(255,255,255,.75);font-weight:400;}
+.h-btns{display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap;opacity:0;animation:up .8s .88s ease forwards;}
+.si{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0;animation:up .6s 1.3s forwards;}
+.si-l{width:1px;height:52px;background:linear-gradient(to bottom,transparent,var(--teal));animation:sla 2.6s ease-in-out infinite;}
+.si-t{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.28em;color:var(--dim);text-transform:uppercase;}
+
+/* STATEMENT (HOME) */
+.stmt-sec{padding:180px 24px;text-align:center;}
+.sp{font-family:'Syne',sans-serif;font-size:clamp(22px,4vw,54px);font-weight:700;line-height:1.3;letter-spacing:-.025em;max-width:860px;margin:0 auto;}
+.sp .w{display:inline;color:rgba(255,255,255,.08);transition:color .5s;}
+.sp .w.on{color:var(--w);}
+.sp .tc{color:var(--teal)!important;}
+
+/* TWO AUDIENCE CARDS (HOME) */
+.audience-sec{padding:80px 24px 160px;max-width:1060px;margin:0 auto;}
+
+/* CLOSER (HOME) */
+.closer-sec{min-height:70vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:140px 24px;position:relative;overflow:hidden;}
+.closer-sec::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 50% 50%,rgba(94,207,204,.038) 0%,transparent 68%);}
+.cl{position:relative;z-index:1;max-width:780px;}
+.cl-h{font-family:'Syne',sans-serif;font-size:clamp(52px,9vw,112px);font-weight:800;letter-spacing:-.05em;line-height:.88;margin-bottom:44px;}
+.cl-h em{display:block;font-style:italic;font-weight:200;color:var(--teal);font-size:.6em;letter-spacing:-.02em;margin-top:10px;}
+.cl-s{font-size:16px;color:var(--g);max-width:400px;margin:0 auto 52px;line-height:1.8;font-weight:300;}
+
+/* NUMBERS */
+.num-item{padding:48px 36px;background:var(--ink2);}
+.nv{font-family:'Syne',sans-serif;font-size:clamp(44px,5.5vw,68px);font-weight:800;letter-spacing:-.045em;line-height:1;margin-bottom:12px;}
+.nv b{color:var(--teal);}
+.nd{font-size:13px;color:var(--g);font-weight:300;line-height:1.6;}
+
+/* PAGE HEADERS */
+.pg-hero{padding:200px 24px 100px;border-bottom:1px solid var(--b);}
+.pg-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.35em;color:var(--teal);text-transform:uppercase;display:block;margin-bottom:24px;}
+.pg-h{font-family:'Syne',sans-serif;font-size:clamp(52px,8vw,110px);font-weight:800;letter-spacing:-.05em;line-height:.9;margin-bottom:32px;}
+.pg-h em{font-style:italic;font-weight:200;color:var(--teal);}
+.pg-sub{font-size:clamp(15px,1.8vw,19px);color:var(--g);font-weight:300;max-width:520px;line-height:1.75;}
+
+/* CODE BLOCKS */
+pre{background:#0A0D10;border:1px solid var(--b);border-radius:4px;padding:24px;overflow-x:auto;font-family:'DM Mono',monospace;font-size:12px;color:#aaa;line-height:1.7;}
+pre .kw{color:var(--teal);}
+pre .str{color:#e8a87c;}
+pre .cm{color:#444;}
+
+/* PRICING */
+.price-card{padding:48px 40px;border:1px solid var(--b);position:relative;transition:border-color .3s;}
+.price-card:hover{border-color:rgba(94,207,204,.2);}
+.price-card.featured{border-color:rgba(94,207,204,.35);}
+.price-card.featured::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--teal);}
+.price-amt{font-family:'Syne',sans-serif;font-size:clamp(44px,5vw,60px);font-weight:800;letter-spacing:-.04em;line-height:1;margin:20px 0 8px;}
+.price-amt span{font-size:.35em;font-weight:300;color:var(--g);vertical-align:top;margin-top:14px;display:inline-block;}
+.price-per{font-size:12px;color:var(--g);margin-bottom:32px;font-family:'DM Mono',monospace;letter-spacing:.08em;}
+.price-name{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--teal);text-transform:uppercase;margin-bottom:8px;display:block;}
+.price-desc{font-size:13px;color:var(--g);line-height:1.7;margin-bottom:32px;}
+.price-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:40px;}
+.price-list li{font-size:13px;color:var(--g);padding-left:18px;position:relative;font-weight:300;}
+.price-list li::before{content:'→';position:absolute;left:0;color:var(--teal);font-size:11px;}
+.price-list li.on{color:var(--w);}
+
+/* BLOG */
+.post-card{padding:40px;border-bottom:1px solid var(--b);display:grid;grid-template-columns:1fr auto;gap:24px;align-items:start;transition:background .2s;cursor:pointer;}
+.post-card:hover{background:rgba(255,255,255,.02);}
+.post-tag{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;color:var(--teal);text-transform:uppercase;margin-bottom:12px;display:block;}
+.post-h{font-family:'Syne',sans-serif;font-size:clamp(18px,2vw,22px);font-weight:700;letter-spacing:-.02em;margin-bottom:10px;line-height:1.2;}
+.post-p{font-size:13px;color:var(--g);line-height:1.7;font-weight:300;}
+.post-date{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.1em;white-space:nowrap;margin-top:4px;}
+
+/* CAREERS */
+.role-card{padding:36px 40px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;gap:20px;transition:background .2s;cursor:pointer;}
+.role-card:hover{background:rgba(255,255,255,.02);}
+.role-dept{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;color:var(--teal);text-transform:uppercase;margin-bottom:8px;display:block;}
+.role-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;letter-spacing:-.02em;}
+.role-loc{font-size:12px;color:var(--g);margin-top:4px;}
+.role-arr{color:var(--teal);font-size:20px;}
+
+/* LEGAL */
+.legal-content h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;letter-spacing:-.01em;margin:40px 0 12px;color:var(--w);}
+.legal-content p{font-size:14px;color:var(--g);line-height:1.85;margin-bottom:16px;font-weight:300;}
+.legal-content ul{padding-left:20px;margin-bottom:16px;}
+.legal-content ul li{font-size:14px;color:var(--g);line-height:1.8;margin-bottom:8px;font-weight:300;}
+
+/* FOOTER */
+footer{padding:56px 64px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--b);flex-wrap:wrap;gap:24px;}
+.fl{font-family:'Syne',sans-serif;font-size:12px;font-weight:800;letter-spacing:.16em;cursor:pointer;}
+.fl i{color:var(--teal);font-style:normal;}
+.flinks{display:flex;gap:28px;list-style:none;}
+.flinks a{font-size:10px;color:var(--dim);text-decoration:none;letter-spacing:.06em;transition:color .2s;cursor:pointer;}
+.flinks a:hover{color:var(--g);}
+.fc{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.1em;}
+
+@keyframes up{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+@keyframes tk{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+@keyframes sla{0%,100%{opacity:.25;}50%{opacity:1;}}
+
+@media(max-width:900px){.grid3{grid-template-columns:1fr 1fr;}.grid4{grid-template-columns:1fr 1fr;}}
+@media(max-width:768px){
+  nav{padding:20px 24px;}nav.s{padding:16px 24px;}.nl{display:none;}
+  .grid2,.grid3{grid-template-columns:1fr;}.grid4{grid-template-columns:1fr 1fr;}
+  footer{flex-direction:column;text-align:center;padding:40px 24px;}.flinks{flex-wrap:wrap;justify-content:center;}
+  .cur,.cur-r{display:none;}body{cursor:auto;}
+  .pg-hero{padding:140px 24px 80px;}
+  .post-card{grid-template-columns:1fr;}
+  .role-card{flex-direction:column;align-items:flex-start;}
+}
+@media(max-width:480px){.grid4{grid-template-columns:1fr;}.nv{font-size:clamp(36px,12vw,52px);}}
+</style>
+</head>
+<body>
+
+<div class="cur" id="c"></div>
+<div class="cur-r" id="cr"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="logo" onclick="go('home')">ARISYN<i>.</i></div>
+  <ul class="nl">
+    <li><a onclick="go('platform')">Platform</a></li>
+    <li><a onclick="go('vocaldna')">VocalDNA</a></li>
+    <li><a onclick="go('api')">API</a></li>
+    <li><a onclick="go('labs')">Labs</a></li>
+    <li><a onclick="go('pricing')">Pricing</a></li>
+    <li><a onclick="go('about')">About</a></li>
+    <li><a onclick="go('pricing')" class="nc">Early Access</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PAGE: HOME -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <section id="home-hero">
+    <p class="h-tag">Vocal Intelligence OS</p>
+    <h1 class="h1">Your voice.</h1>
+    <h1 class="h1e">Engineered.</h1>
+    <p class="h-sub">For <b>artists</b> who want to sound right.<br>For <b>engineers</b> who want to move faster.<br>One platform. Any voice. Any reference.</p>
+    <div class="h-btns">
+      <button class="b1" onclick="go('pricing')">Get Early Access</button>
+      <button class="b2" onclick="go('platform')">See how it works →</button>
+    </div>
+    <div class="si"><div class="si-l"></div><span class="si-t">Scroll</span></div>
+  </section>
+
+  <div class="tkr">
+    <div class="ttr">
+      <div class="ti"><div class="td"></div>Extract any vocal chain</div>
+      <div class="ti"><div class="td"></div>Apply it to any voice</div>
+      <div class="ti"><div class="td"></div>iPhone to professional</div>
+      <div class="ti"><div class="td"></div>Any genre. Any culture.</div>
+      <div class="ti"><div class="td"></div>Engineer's co-pilot</div>
+      <div class="ti"><div class="td"></div>The Stripe of sound</div>
+      <div class="ti"><div class="td"></div>No session required</div>
+      <div class="ti"><div class="td"></div>Extract any vocal chain</div>
+      <div class="ti"><div class="td"></div>Apply it to any voice</div>
+      <div class="ti"><div class="td"></div>iPhone to professional</div>
+      <div class="ti"><div class="td"></div>Any genre. Any culture.</div>
+      <div class="ti"><div class="td"></div>Engineer's co-pilot</div>
+      <div class="ti"><div class="td"></div>The Stripe of sound</div>
+      <div class="ti"><div class="td"></div>No session required</div>
+    </div>
+  </div>
+
+  <section class="stmt-sec">
+    <p class="sp" id="sp">
+      <span class="w">Great</span> <span class="w">vocals</span> <span class="w">don't</span> <span class="w">come</span> <span class="w">from</span> <span class="w tc">luck.</span>
+      <span class="w">They</span> <span class="w">come</span> <span class="w">from</span> <span class="w tc">a chain.</span>
+      <span class="w">Arisyn</span> <span class="w">extracts</span> <span class="w">it.</span>
+      <span class="w">Adapts</span> <span class="w">it.</span>
+      <span class="w">Applies</span> <span class="w">it</span> <span class="w">to</span> <span class="w tc">your voice.</span>
+    </p>
+  </section>
+
+  <section class="audience-sec">
+    <div class="grid2">
+      <div class="card rv">
+        <span class="card-eye">For the Artist</span>
+        <h3 class="card-h">Record anywhere.<br>Sound like a studio.</h3>
+        <p class="card-p">iPhone. Voice memo. BandLab file. It doesn't matter. Upload your vocal and a reference — Arisyn extracts the exact chain and adapts it to your voice. Not a preset. The real thing.</p>
+        <span class="tag" onclick="go('platform')" style="cursor:pointer;">Extract + Apply →</span>
+      </div>
+      <div class="card rv d2">
+        <span class="card-eye">For the Engineer</span>
+        <h3 class="card-h">Your intelligence.<br>Amplified.</h3>
+        <p class="card-p">Feed Arisyn a vocal, a reference, a brief — get back a fully analyzed chain with DSP parameters you can use, adjust, or override. Move faster. Serve more clients. Never start from scratch.</p>
+        <span class="tag" onclick="go('api')" style="cursor:pointer;">API Access →</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" style="background:var(--ink2);border-top:1px solid var(--b);border-bottom:1px solid var(--b);">
+    <div class="inner">
+      <span class="s-eye rv">The proof</span>
+      <h2 class="s-h rv" style="margin-bottom:64px;">Numbers don't lie.</h2>
+      <div class="grid4">
+        <div class="num-item rv"><div class="nv">512<b>D</b></div><div class="nd">Dimensions in every vocal profile</div></div>
+        <div class="num-item rv d1"><div class="nv">&lt;10<b>s</b></div><div class="nd">From upload to professional result</div></div>
+        <div class="num-item rv d2"><div class="nv">30<b>+</b></div><div class="nd">Genres across 6 continents</div></div>
+        <div class="num-item rv d3"><div class="nv">0<b>$</b></div><div class="nd">To get started at launch</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="closer-sec">
+    <div class="cl">
+      <h2 class="cl-h rv">Your voice.<em>Finally right.</em></h2>
+      <p class="cl-s rv d1">Whether you're the artist or the engineer — Arisyn closes the gap between what you recorded and what you heard in your head.</p>
+      <div class="rv d2"><button class="b1" onclick="go('pricing')">Get Early Access</button></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PAGE: PLATFORM -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="page" id="page-platform">
+  <div class="pg-hero">
+    <div class="inner">
+      <span class="pg-tag">The Platform</span>
+      <h1 class="pg-h">Two flows.<br><em>One result.</em></h1>
+      <p class="pg-sub">Drop your vocal. Pick a reference or let Arisyn decide. Walk away with something professional — and a SoundCard that shows exactly what happened.</p>
+    </div>
+  </div>
+
+  <section class="sec">
+    <div class="inner">
+      <div class="grid2" style="margin-bottom:80px;">
+        <div class="card rv">
+          <span class="card-eye">Flow 01 — Auto</span>
+          <h3 class="card-h">Raw in.<br>Professional out.</h3>
+          <p class="card-p">Upload any vocal — iPhone recording, voice memo, BandLab export. No reference needed. Arisyn analyzes the input, runs it through the full V1.2 pipeline: vocal isolation, NVIDIA Maxine cleanup, 100K Mic Emulation, NVO intelligence, DSP chain, Master Polish. Output is streaming-ready.</p>
+          <span class="tag">Auto Enhance</span>
+        </div>
+        <div class="card rv d2">
+          <span class="card-eye">Flow 02 — Reference</span>
+          <h3 class="card-h">Their sound.<br>Your voice.</h3>
+          <p class="card-p">Upload your vocal and any reference track. Arisyn isolates the vocal from the reference, extracts the full processing chain — gate, de-esser, EQ, compression, saturation, reverb, delay, stereo width — and adapts every parameter to your vocal's unique characteristics.</p>
+          <span class="tag">Extract + Apply</span>
+        </div>
+      </div>
+
+      <span class="s-eye rv">The pipeline</span>
+      <h2 class="s-h rv" style="margin-bottom:48px;">Every step. Explained.</h2>
+      <div class="grid3" style="margin-bottom:80px;">
+        <div class="card rv">
+          <span class="card-eye">Step 01</span>
+          <h3 class="card-h">Input Analysis</h3>
+          <p class="card-p">Arisyn classifies your audio — phone recording, studio mic, full mix — and adapts the processing intensity accordingly. Nothing is over-processed.</p>
+        </div>
+        <div class="card rv d1">
+          <span class="card-eye">Step 02</span>
+          <h3 class="card-h">Maxine Cleanup</h3>
+          <p class="card-p">NVIDIA Maxine runs noise reduction, de-reverb, and declipping. Strength is adaptive — a phone recording gets more, a studio vocal gets less.</p>
+        </div>
+        <div class="card rv d2">
+          <span class="card-eye">Step 03</span>
+          <h3 class="card-h">100K Mic Emulation</h3>
+          <p class="card-p">Your vocal is transformed into the tonal profile of a professional-grade microphone. Sony C800G, Neumann U47, or Telefunken 251 — selected based on your voice characteristics.</p>
+        </div>
+        <div class="card rv">
+          <span class="card-eye">Step 04</span>
+          <h3 class="card-h">Vocal DNA</h3>
+          <p class="card-p">A 512-dimensional profile is generated from your voice — capturing brightness, warmth, presence, air, clarity, emotional content, and more.</p>
+        </div>
+        <div class="card rv d1">
+          <span class="card-eye">Step 05</span>
+          <h3 class="card-h">NVO Intelligence</h3>
+          <p class="card-p">The Neural Vocal Orchestrator reasons about your vocal — cross-referencing cultural context, emotional data, and vocal DNA to build a DSP prescription unique to your voice.</p>
+        </div>
+        <div class="card rv d2">
+          <span class="card-eye">Step 06</span>
+          <h3 class="card-h">DSP + Master Polish</h3>
+          <p class="card-p">Full signal chain applied: EQ, compression, saturation, reverb, stereo width. Then Arisyn Master Polish targets -14 LUFS for streaming. True peak never exceeds -1dBTP.</p>
+        </div>
+      </div>
+
+      <div class="card rv" style="text-align:center;padding:72px 40px;">
+        <h3 class="card-h" style="font-size:clamp(28px,3.5vw,40px);margin-bottom:16px;">The SoundCard</h3>
+        <p class="card-p" style="max-width:500px;margin:0 auto 32px;">Every processed vocal generates a SoundCard — your before/after comparison, DNA profile, chain summary, and streaming-ready download. All in one file.</p>
+        <button class="bt" onclick="go('soundcard')">Explore SoundCard →</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PAGE: VOCALDNA -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="page" id="page-vocaldna">
+  <div class="pg-hero">
+    <div class="inner">
+      <span class="pg-tag">VocalDNA™</span>
+      <h1 class="pg-h">Your voice<br><em>is data.</em></h1>
+      <p class="pg-sub">Every voice contains a unique biological and acoustic signature. VocalDNA captures it in 512 dimensions — and uses it to make every processing decision smarter.</p>
+    </div>
+  </div>
+
+  <section class="sec">
+    <div class="inner">
+      <div class="grid2" style="margin-bottom:80px;">
+        <div>
+          <span class="s-eye rv">What we capture</span>
+          <h2 class="s-h rv" style="margin-bottom:32px;">More than<br>a waveform.</h2>
+          <p class="s-sub rv d1" style="margin-bottom:40px;">VocalDNA reads 10 categories of vocal characteristics — turning your voice into an intelligence profile that drives every downstream decision.</p>
+          <div style="display:flex;flex-direction:column;gap:2px;margin-top:40px;">
+            <div class="rv d1" style="padding:20px 24px;border:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--g);text-transform:uppercase;">Pitch Profile</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);">Fundamental + harmonics</span>
+            </div>
+            <div class="rv d1" style="padding:20px 24px;border:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--g);text-transform:uppercase;">Timbre</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);">Brightness, warmth, body</span>
+            </div>
+            <div class="rv d2" style="padding:20px 24px;border:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--g);text-transform:uppercase;">Dynamics</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);">Range, consistency, peaks</span>
+            </div>
+            <div class="rv d2" style="padding:20px 24px;border:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--g);text-transform:uppercase;">Emotion</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);">8-class mood detection</span>
+            </div>
+            <div class="rv d3" style="padding:20px 24px;border:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--g);text-transform:uppercase;">Cultural Context</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);">150+ cultural signatures</span>
+            </div>
+            <div class="rv d3" style="padding:20px 24px;border:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--g);text-transform:uppercase;">Source Quality</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);">Phone → studio detection</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="height:100%;display:flex;flex-direction:column;justify-content:center;gap:20px;">
+            <span class="card-eye">Sample profile output</span>
+            <pre><span class="cm">// VocalDNA profile — 512D vector</span>
+{
+  <span class="str">"confidence"</span>: <span class="kw">0.82</span>,
+  <span class="str">"features"</span>: {
+    <span class="str">"brightness"</span>: <span class="kw">0.78</span>,
+    <span class="str">"warmth"</span>: <span class="kw">0.65</span>,
+    <span class="str">"presence"</span>: <span class="kw">0.82</span>,
+    <span class="str">"air"</span>: <span class="kw">0.71</span>,
+    <span class="str">"clarity"</span>: <span class="kw">0.88</span>,
+    <span class="str">"primary_emotion"</span>: <span class="str">"confident"</span>,
+    <span class="str">"cultural_context"</span>: <span class="str">"trap_us"</span>,
+    <span class="str">"source_quality"</span>: <span class="str">"phone"</span>
+  },
+  <span class="str">"vector"</span>: [<span class="kw">...</span>] <span class="cm">// 512 dimensions</span>
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid4" style="margin-top:0;">
+        <div class="num-item rv"><div class="nv">512<b>D</b></div><div class="nd">Dimensions per profile</div></div>
+        <div class="num-item rv d1"><div class="nv">10<b>+</b></div><div class="nd">Feature categories captured</div></div>
+        <div class="num-item rv d2"><div class="nv">150<b>+</b></div><div class="nd">Cultural signatures recognized</div></div>
+        <div class="num-item rv d3"><div class="nv">8</div><div class="nd">Emotion classes detected</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PAGE: API -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="page" id="page-api">
+  <div class="pg-hero">
+    <div class="inner">
+      <span class="pg-tag">API / Developers</span>
+      <h1 class="pg-h">Build with<br><em>vocal intelligence.</em></h1>
+      <p class="pg-sub">The Arisyn API gives you programmatic access to the full pipeline — submit jobs, poll status, retrieve results, and integrate vocal intelligence into any product.</p>
+    </div>
+  </div>
+
+  <section class="sec">
+    <div class="inner">
+      <div class="grid2" style="margin-bottom:80px;align-items:start;">
+        <div>
+          <span class="s-eye rv">Endpoints</span>
+          <h2 class="s-h rv" style="margin-bottom:40px;">Simple.<br>Powerful.</h2>
+          <div style="display:flex;flex-direction:column;gap:2px;">
+            <div class="rv" style="padding:20px 24px;border:1px solid var(--b);">
+              <div style="display:flex;gap:12px;align-items:center;margin-bottom:6px;">
+                <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--teal);background:rgba(94,207,204,.1);padding:3px 8px;border-radius:2px;">POST</span>
+                <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--w);">/v1/jobs/submit</span>
+              </div>
+              <p style="font-size:12px;color:var(--g);">Submit a vocal processing job with audio file and flow parameters</p>
+            </div>
+            <div class="rv d1" style="padding:20px 24px;border:1px solid var(--b);">
+              <div style="display:flex;gap:12px;align-items:center;margin-bottom:6px;">
+                <span style="font-family:'DM Mono',monospace;font-size:9px;color:#e8a87c;background:rgba(232,168,124,.1);padding:3px 8px;border-radius:2px;">GET</span>
+                <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--w);">/v1/jobs/{id}/status</span>
+              </div>
+              <p style="font-size:12px;color:var(--g);">Poll processing status — queued, processing, complete, failed</p>
+            </div>
+            <div class="rv d2" style="padding:20px 24px;border:1px solid var(--b);">
+              <div style="display:flex;gap:12px;align-items:center;margin-bottom:6px;">
+                <span style="font-family:'DM Mono',monospace;font-size:9px;color:#e8a87c;background:rgba(232,168,124,.1);padding:3px 8px;border-radius:2px;">GET</span>
+                <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--w);">/v1/jobs/{id}/result</span>
+              </div>
+              <p style="font-size:12px;color:var(--g);">Retrieve processed audio, VocalDNA profile, chain data, SoundCard</p>
+            </div>
+            <div class="rv d3" style="padding:20px 24px;border:1px solid var(--b);">
+              <div style="display:flex;gap:12px;align-items:center;margin-bottom:6px;">
+                <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--teal);background:rgba(94,207,204,.1);padding:3px 8px;border-radius:2px;">POST</span>
+                <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--w);">/v1/vocaldna/extract</span>
+              </div>
+              <p style="font-size:12px;color:var(--g);">Extract a 512D VocalDNA profile from any vocal file</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <span class="s-eye rv">Quick start</span>
+          <pre class="rv d1"><span class="cm">// Submit a Flow 2 job</span>
+<span class="kw">const</span> response = <span class="kw">await</span> fetch(
+  <span class="str">'https://api.arisyn.ai/v1/jobs/submit'</span>,
+  {
+    method: <span class="str">'POST'</span>,
+    headers: {
+      <span class="str">'Authorization'</span>: <span class="str">`Bearer ${API_KEY}`</span>,
+      <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>
+    },
+    body: JSON.stringify({
+      flow: <span class="str">'flow_2'</span>,
+      vocal_url: <span class="str">'...'</span>,
+      reference_url: <span class="str">'...'</span>,
+      blend: <span class="kw">0.7</span>
+    })
+  }
+);
+
+<span class="kw">const</span> { job_id } = <span class="kw">await</span> response.json();
+
+<span class="cm">// Poll for completion</span>
+<span class="kw">const</span> result = <span class="kw">await</span> pollUntilComplete(job_id);</pre>
+        </div>
+      </div>
+
+      <div class="card rv" style="text-align:center;padding:72px;">
+        <h3 class="card-h" style="font-size:clamp(26px,3vw,36px);margin-bottom:14px;">API access coming soon.</h3>
+        <p class="card-p" style="max-width:420px;margin:0 auto 32px;">Join the early access list to get notified when the API opens. Developer tier starts free.</p>
+        <button class="bt" onclick="go('pricing')">Join Early Access →</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PAGE: LABS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="page" id="page-labs">
+  <div class="pg-hero">
+    <div class="inner">
+      <span class="pg-tag">Arisyn Labs</span>
+      <h1 class="pg-h">Where the<br><em>science lives.</em></h1>
+      <p class="pg-sub">Arisyn Labs is our research arm — pushing the boundaries of vocal intelligence, cultural AI, and signal processing science.</p>
+    </div>
+  </div>
+
+  <section class="sec">
+    <div class="inner">
+      <div class="grid3" style="margin-bottom:80px;">
+        <div class="card rv">
+          <span class="card-eye">Research Area 01</span>
+          <h3 class="card-h">Vocal Intelligence</h3>
+          <p class="card-p">Multi-dimensional voice profiling, emotional content detection, biological identity markers, and health indicators — all from raw audio.</p>
+        </div>
+        <div class="card rv d1">
+          <span class="card-eye">Research Area 02</span>
+          <h3 class="card-h">Cultural AI</h3>
+          <p class="card-p">Training models that understand how genre, geography, and cultural context shape vocal production — across 150+ cultural signatures and 30+ genres.</p>
+        </div>
+        <div class="card rv d2">
+          <span class="card-eye">Research Area 03</span>
+          <h3 class="card-h">Chain Intelligence</h3>
+          <p class="card-p">Reverse-engineering the decisions behind professional vocal production — extracting, adapting, and applying processing chains with surgical accuracy.</p>
+        </div>
+        <div class="card rv">
+          <span class="card-eye">Research Area 04</span>
+          <h3 class="card-h">Neural DSP</h3>
+          <p class="card-p">Building the next generation of digital signal processing — where every parameter is informed by intelligence rather than manual adjustment.</p>
+        </div>
+        <div class="card rv d1">
+          <span class="card-eye">Research Area 05</span>
+          <h3 class="card-h">Vocal Health OS</h3>
+          <p class="card-p">Detecting vocal strain, fatigue, and health markers from audio — a future vertical within the Arisyn Intelligence Systems architecture.</p>
+        </div>
+        <div class="card rv d2">
+          <span class="card-eye">Research Area 06</span>
+          <h3 class="card-h">HiRAG Memory</h3>
+          <p class="card-p">Hierarchical retrieval-augmented generation for vocal intelligence — enabling the system to learn from every processed voice over time.</p>
+        </div>
+      </div>
+      <div class="card rv" style="text-align:center;padding:64px;">
+        <h3 class="card-h" style="font-size:clamp(24px,3vw,34px);margin-bottom:12px;">Research partnerships open.</h3>
+        <p class="card-p" style="max-width:400px;margin:0 auto 28px;">If you're a researcher, institution, or company working at the intersection of audio AI and culture — let's talk.</p>
+        <button class="bt" onclick="go('about')">Get in Touch →</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PAGE: PRICING -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="page" id="page-pricing">
+  <div class="pg-hero">
+    <div class="inner">
+      <span class="pg-tag">Pricing</span>
+      <h1 class="pg-h">Start free.<br><em>Scale when ready.</em></h1>
+      <p class="pg-sub">Every artist deserves professional sound. Arisyn starts free — and grows with you.</p>
+    </div>
+  </div>
+
+  <section class="sec">
+    <div class="inner">
+      <div class="grid3" style="margin-bottom:80px;">
+        <div class="price-card rv">
+          <span class="price-name">Free</span>
+          <div class="price-amt"><span>$</span>0</div>
+          <p class="price-per">forever</p>
+          <p class="price-desc">For artists just getting started. No credit card required.</p>
+          <ul class="price-list">
+            <li class="on">5 vocal processes per month</li>
+            <li class="on">Flow 01 — Auto Enhance</li>
+            <li class="on">VocalDNA profile generation</li>
+            <li class="on">SoundCard export</li>
+            <li>Flow 02 — Reference chain</li>
+            <li>API access</li>
+            <li>Priority processing</li>
+          </ul>
+          <button class="b2" style="width:100%;justify-content:center;">Get Started</button>
+        </div>
+        <div class="price-card featured rv d1">
+          <span class="price-name">Pro</span>
+          <div class="price-amt"><span>$</span>29</div>
+          <p class="price-per">per month</p>
+          <p class="price-desc">For serious artists and engineers who process vocals regularly.</p>
+          <ul class="price-list">
+            <li class="on">100 vocal processes per month</li>
+            <li class="on">Flow 01 + Flow 02</li>
+            <li class="on">VocalDNA profile generation</li>
+            <li class="on">SoundCard export + .ASC download</li>
+            <li class="on">Priority processing</li>
+            <li class="on">Chain history + recall</li>
+            <li>API access</li>
+          </ul>
+          <button class="bt" style="width:100%;text-align:center;display:block;">Get Early Access</button>
+        </div>
+        <div class="price-card rv d2">
+          <span class="price-name">API</span>
+          <div class="price-amt"><span>$</span>99</div>
+          <p class="price-per">per month + usage</p>
+          <p class="price-desc">For engineers, platforms, and developers building with Arisyn.</p>
+          <ul class="price-list">
+            <li class="on">Full API access</li>
+            <li class="on">Unlimited flows</li>
+            <li class="on">Webhook support</li>
+            <li class="on">Batch processing</li>
+            <li class="on">VocalDNA bulk extraction</li>
+            <li class="on">SLA + dedicated support</li>
+            <li class="on">White-label output</li>
+          </ul>
+          <button class="b2" style="width:100%;justify-content:center;">Contact Sales</button>
+        </div>
+      </div>
+      <div class="card rv" style="text-align:center;padding:56px;">
+        <h3 class="card-h" style="margin-bottom:12px;">Enterprise or platform?</h3>
+        <p class="card-p" style="max-width:420px;margin:0 auto 28px;">BandLab, TikTok, Spotify, DAW integrations — if you're building at scale, we have a custom tier. Let's talk.</p>
+        <button class="b2" onclick="go('about')">Contact Us →</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PAGE: SOUNDCARD -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="page" id="page-soundcard">
+  <div class="pg-hero">
+    <div class="inner">
+      <span class="pg-tag">SoundCard™</span>
+      <h1 class="pg-h">Your voice.<br><em>Documented.</em></h1>
+      <p class="pg-sub">Every processed vocal generates a SoundCard — a living record of your voice, your chain, your transformation. Before and after. All in one file.</p>
+    </div>
+  </div>
+
+  <section class="sec">
+    <div class="inner">
+      <div class="grid2" style="margin-bottom:80px;">
+        <div>
+          <span class="s-eye rv">What's in a SoundCard</span>
+          <h2 class="s-h rv" style="margin-bottom:40px;">Everything<br>that happened.</h2>
+          <div style="display:flex;flex-direction:column;gap:2px;">
+            <div class="rv" style="padding:18px 22px;border:1px solid var(--b);display:flex;justify-content:space-between;">
+              <span style="font-size:13px;color:var(--w);">VocalDNA Profile (512D)</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);">Always included</span>
+            </div>
+            <div class="rv d1" style="padding:18px 22px;border:1px solid var(--b);display:flex;justify-content:space-between;">
+              <span style="font-size:13px;color:var(--w);">Before/After Audio Player</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);">A/B comparison</span>
+            </div>
+            <div class="rv d1" style="padding:18px 22px;border:1px solid var(--b);display:flex;justify-content:space-between;">
+              <span style="font-size:13px;color:var(--w);">Chain Summary</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);">Every effect applied</span>
+            </div>
+            <div class="rv d2" style="padding:18px 22px;border:1px solid var(--b);display:flex;justify-content:space-between;">
+              <span style="font-size:13px;color:var(--w);">Loudness Report</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);">LUFS + true peak</span>
+            </div>
+            <div class="rv d2" style="padding:18px 22px;border:1px solid var(--b);display:flex;justify-content:space-between;">
+              <span style="font-size:13px;color:var(--w);">Processing Metrics</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);">Confidence, time, mic</span>
+            </div>
+            <div class="rv d3" style="padding:18px 22px;border:1px solid var(--b);display:flex;justify-content:space-between;">
+              <span style="font-size:13px;color:var(--w);">.ASC File Download</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);">Living file format</span>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;gap:32px;">
+          <div>
+            <span class="card-eye">The .ASC format</span>
+            <h3 class="card-h">A living file.</h3>
+            <p class="card-p">The .ASC (Arisyn SoundCard) format carries your vocal chain as data. Drag one SoundCard onto another and the chain applies — like an audio filter, but intelligent. Plays offline. Shareable. Yours forever.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="padding:20px;border:1px solid var(--b);text-align:center;">
+              <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--teal);margin-bottom:4px;">.ASC</div>
+              <div style="font-size:11px;color:var(--g);">Arisyn SoundCard</div>
+            </div>
+            <div style="padding:20px;border:1px solid var(--b);text-align:center;">
+              <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:4px;">✓</div>
+              <div style="font-size:11px;color:var(--g);">Stream ready</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PAGE: ABOUT -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="page" id="page-about">
+  <div class="pg-hero">
+    <div class="inner">
+      <span class="pg-tag">About</span>
+      <h1 class="pg-h">Built because<br><em>it had to exist.</em></h1>
+      <p class="pg-sub">Arisyn was built by an artist who was tired of tools that couldn't deliver. Not a lab experiment. A solution to a real problem — from someone who lived it.</p>
+    </div>
+  </div>
+
+  <section class="sec">
+    <div class="inner">
+      <div class="grid2" style="margin-bottom:80px;">
+        <div>
+          <span class="s-eye rv">The mission</span>
+          <h2 class="s-h rv" style="margin-bottom:32px;">Vocal intelligence<br>for everyone.</h2>
+          <p class="s-sub rv d1" style="margin-bottom:24px;">The gap between a raw voice recording and a professional result has always required either expensive studios, experienced engineers, or years of self-taught skill.</p>
+          <p class="rv d2" style="font-size:15px;color:var(--g);line-height:1.8;font-weight:300;max-width:480px;">Arisyn closes that gap. Not with presets or templates — with actual intelligence that understands your voice, understands your reference, and makes decisions a great engineer would make.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px;">
+          <div class="card rv">
+            <span class="card-eye">The Company</span>
+            <h3 class="card-h">Arisyn Intelligence<br>Systems, Inc.</h3>
+            <p class="card-p">A Delaware C-Corporation. Operating under Vertical Applied — a holding company built for vertical expansion and eventual acquisition. We are building infrastructure, not a plugin.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid3" style="margin-bottom:80px;">
+        <div class="card rv">
+          <span class="card-eye">What we are</span>
+          <h3 class="card-h">The API layer for vocal intelligence.</h3>
+          <p class="card-p">Like Stripe is to payments — Arisyn is the infrastructure that powers vocal processing across any product, platform, or DAW that calls our API.</p>
+        </div>
+        <div class="card rv d1">
+          <span class="card-eye">Who we serve</span>
+          <h3 class="card-h">Artists. Engineers. Platforms.</h3>
+          <p class="card-p">Independent musicians. Audio engineers. BandLab, TikTok, Spotify, Ableton — any product where voice is input. We are the intelligence layer underneath.</p>
+        </div>
+        <div class="card rv d2">
+          <span class="card-eye">Where we're going</span>
+          <h3 class="card-h">Vocal health. Identity. Culture.</h3>
+          <p class="card-p">Processing is the beginning. VocalDNA is biological data — with applications in health monitoring, voice authentication, cultural preservation, and beyond.</p>
+        </div>
+      </div>
+
+      <div class="card rv" style="padding:64px;text-align:center;">
+        <h3 class="card-h" style="font-size:clamp(24px,3vw,36px);margin-bottom:12px;">Get in touch.</h3>
+        <p class="card-p" style="max-width:400px;margin:0 auto 12px;">Partnerships, press, research, investment — we're open.</p>
+        <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--teal);margin-bottom:32px;">hello@arisyn.ai</p>
+        <button class="bt" onclick="go('careers')">We're Hiring →</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PAGE: BLOG -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="page" id="page-blog">
+  <div class="pg-hero">
+    <div class="inner">
+      <span class="pg-tag">Blog</span>
+      <h1 class="pg-h">Words from<br><em>the lab.</em></h1>
+      <p class="pg-sub">Technical writing, product updates, and perspectives on vocal intelligence, audio AI, and the future of music production.</p>
+    </div>
+  </div>
+
+  <section style="padding:60px 0 120px;">
+    <div class="inner">
+      <div style="border-top:1px solid var(--b);">
+        <div class="post-card rv">
+          <div>
+            <span class="post-tag">Product</span>
+            <h3 class="post-h">Introducing the V1.2 Pipeline: How Arisyn Processes a Vocal</h3>
+            <p class="post-p">A deep look at the seven-stage pipeline — from input analysis to SoundCard generation — and the design decisions behind each step.</p>
+          </div>
+          <div class="post-date">Mar 2026</div>
+        </div>
+        <div class="post-card rv d1">
+          <div>
+            <span class="post-tag">Research</span>
+            <h3 class="post-h">VocalDNA: Why 512 Dimensions and What They Capture</h3>
+            <p class="post-p">The science behind our 512-dimensional vocal profiling system — how we chose the feature categories and what each dimension represents.</p>
+          </div>
+          <div class="post-date">Feb 2026</div>
+        </div>
+        <div class="post-card rv d2">
+          <div>
+            <span class="post-tag">Research</span>
+            <h3 class="post-h">Extract and Apply: Reverse Engineering a Vocal Chain</h3>
+            <p class="post-p">How Arisyn extracts a professional vocal chain from a reference track and adapts it to a different voice without over-processing or losing character.</p>
+          </div>
+          <div class="post-date">Jan 2026</div>
+        </div>
+        <div class="post-card rv d3">
+          <div>
+            <span class="post-tag">Culture</span>
+            <h3 class="post-h">Cultural Intelligence in Audio: Why Genre Isn't Enough</h3>
+            <p class="post-p">Why we built a 150+ cultural signature database — and why processing a Bollywood vocal the same way as a trap vocal is a fundamental mistake.</p>
+          </div>
+          <div class="post-date">Dec 2025</div>
+        </div>
+        <div class="post-card rv">
+          <div>
+            <span class="post-tag">Engineering</span>
+            <h3 class="post-h">From iPhone to Streaming-Ready: The 100K Mic Emulator</h3>
+            <p class="post-p">The technical story of how we transform a phone recording into the tonal profile of a $100,000 microphone — without making it sound fake.</p>
+          </div>
+          <div class="post-date">Nov 2025</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PAGE: CAREERS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="page" id="page-careers">
+  <div class="pg-hero">
+    <div class="inner">
+      <span class="pg-tag">Careers</span>
+      <h1 class="pg-h">Build what<br><em>doesn't exist yet.</em></h1>
+      <p class="pg-sub">We're building the infrastructure layer for vocal intelligence. If that sounds like the most interesting problem you've heard in a while — keep reading.</p>
+    </div>
+  </div>
+
+  <section class="sec">
+    <div class="inner">
+      <div style="border-top:1px solid var(--b);margin-bottom:80px;">
+        <div class="role-card rv">
+          <div>
+            <span class="role-dept">Engineering</span>
+            <div class="role-name">Senior DSP Engineer</div>
+            <div class="role-loc">Remote — Full Time</div>
+          </div>
+          <span class="role-arr">→</span>
+        </div>
+        <div class="role-card rv d1">
+          <div>
+            <span class="role-dept">Engineering</span>
+            <div class="role-name">ML Engineer — Audio</div>
+            <div class="role-loc">Remote — Full Time</div>
+          </div>
+          <span class="role-arr">→</span>
+        </div>
+        <div class="role-card rv d2">
+          <div>
+            <span class="role-dept">Product</span>
+            <div class="role-name">Product Designer</div>
+            <div class="role-loc">Remote — Full Time</div>
+          </div>
+          <span class="role-arr">→</span>
+        </div>
+        <div class="role-card rv d3">
+          <div>
+            <span class="role-dept">Growth</span>
+            <div class="role-name">Artist Relations Lead</div>
+            <div class="role-loc">Remote — Full Time</div>
+          </div>
+          <span class="role-arr">→</span>
+        </div>
+        <div class="role-card rv">
+          <div>
+            <span class="role-dept">Research</span>
+            <div class="role-name">Audio AI Researcher</div>
+            <div class="role-loc">Remote — Full Time</div>
+          </div>
+          <span class="role-arr">→</span>
+        </div>
+      </div>
+
+      <div class="card rv" style="text-align:center;padding:64px;">
+        <h3 class="card-h" style="font-size:clamp(22px,3vw,32px);margin-bottom:12px;">Don't see your role?</h3>
+        <p class="card-p" style="max-width:380px;margin:0 auto 28px;">We hire for capability, not titles. If you want to work on the hardest audio AI problems — reach out.</p>
+        <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--teal);">careers@arisyn.ai</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PAGE: LEGAL -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="page" id="page-legal">
+  <div class="pg-hero">
+    <div class="inner">
+      <span class="pg-tag">Legal</span>
+      <h1 class="pg-h" style="font-size:clamp(40px,6vw,80px);">Privacy &<br><em>Terms.</em></h1>
+      <p class="pg-sub">Last updated: March 2026. Questions? hello@arisyn.ai</p>
+    </div>
+  </div>
+
+  <section class="sec">
+    <div class="inner" style="max-width:720px;">
+      <div class="legal-content rv">
+        <h3>Privacy Policy</h3>
+        <p>Arisyn Intelligence Systems, Inc. ("Arisyn", "we", "us") operates arisyn.ai and related services. This Privacy Policy explains how we collect, use, and protect your information.</p>
+
+        <h3>Information We Collect</h3>
+        <p>When you use Arisyn, we may collect: audio files you upload for processing, account information (email, name), usage data and processing logs, and VocalDNA profiles generated from your audio.</p>
+
+        <h3>How We Use Your Data</h3>
+        <ul>
+          <li>To process your vocals and return results</li>
+          <li>To generate and store your VocalDNA profile</li>
+          <li>To improve our models and processing quality</li>
+          <li>To communicate with you about your account</li>
+        </ul>
+        <p>We do not sell your audio data. We do not share your VocalDNA profile with third parties without your consent.</p>
+
+        <h3>Data Retention</h3>
+        <p>Uploaded audio files are retained for 30 days after processing unless you delete them earlier. VocalDNA profiles are retained as long as your account is active. You may request deletion at any time.</p>
+
+        <h3>Terms of Service</h3>
+        <p>By using Arisyn, you agree to these terms. You retain ownership of all audio you upload. You grant Arisyn a limited license to process your audio for the purpose of providing the service.</p>
+
+        <h3>Intellectual Property</h3>
+        <p>The Arisyn platform, VocalDNA system, Extract+Apply methodology, SoundCard format, and all related technology are proprietary to Arisyn Intelligence Systems, Inc. All rights reserved.</p>
+
+        <h3>Prohibited Uses</h3>
+        <ul>
+          <li>Processing audio you do not have rights to</li>
+          <li>Attempting to reverse-engineer the Arisyn system</li>
+          <li>Using the API to build competing vocal intelligence infrastructure</li>
+          <li>Uploading audio containing personally identifiable information of others without consent</li>
+        </ul>
+
+        <h3>Contact</h3>
+        <p>Arisyn Intelligence Systems, Inc. — hello@arisyn.ai</p>
+        <p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--dim);margin-top:40px;">© 2026 Arisyn Intelligence Systems, Inc. — Vertical Applied</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- FOOTER (shared) -->
+<footer id="footer">
+  <div class="fl" onclick="go('home')">ARISYN<i>.</i></div>
+  <ul class="flinks">
+    <li><a onclick="go('platform')">Platform</a></li>
+    <li><a onclick="go('vocaldna')">VocalDNA</a></li>
+    <li><a onclick="go('api')">API</a></li>
+    <li><a onclick="go('labs')">Labs</a></li>
+    <li><a onclick="go('pricing')">Pricing</a></li>
+    <li><a onclick="go('soundcard')">SoundCard</a></li>
+    <li><a onclick="go('about')">About</a></li>
+    <li><a onclick="go('blog')">Blog</a></li>
+    <li><a onclick="go('careers')">Careers</a></li>
+    <li><a onclick="go('legal')">Legal</a></li>
+  </ul>
+  <p class="fc">© 2026 Arisyn Intelligence Systems, Inc. — Vertical Applied</p>
+</footer>
+
+<script>
+// ─── CURSOR
+const c=document.getElementById('c'),cr=document.getElementById('cr');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;c.style.left=mx+'px';c.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;cr.style.left=rx+'px';cr.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button,.card,.post-card,.role-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{c.style.width='12px';c.style.height='12px';cr.style.width='40px';cr.style.height='40px';});
+  el.addEventListener('mouseleave',()=>{c.style.width='5px';c.style.height='5px';cr.style.width='26px';cr.style.height='26px';});
+});
+
+// ─── NAV SCROLL
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('s',scrollY>80);},{passive:true});
+
+// ─── ROUTING
+function go(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nl a').forEach(a=>a.classList.remove('active'));
+  window.scrollTo({top:0,behavior:'instant'});
+  // Update active nav
+  const map={platform:0,vocaldna:1,api:2,labs:3,pricing:4,about:5};
+  const links=document.querySelectorAll('.nl a');
+  if(map[page]!==undefined) links[map[page]].classList.add('active');
+  // Trigger reveals
+  setTimeout(initReveals,50);
+  // Reset word light on home
+  if(page==='home') words.forEach(w=>w.classList.remove('on'));
+}
+
+// ─── REVEAL ON SCROLL
+function initReveals(){
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');}});
+  },{threshold:.1});
+  document.querySelectorAll('.rv:not(.on)').forEach(el=>io.observe(el));
+}
+initReveals();
+
+// ─── WORD LIGHTING (HOME)
+const words=document.querySelectorAll('#sp .w');
+const stmt=document.getElementById('stmt-sec')||document.querySelector('.stmt-sec');
+window.addEventListener('scroll',()=>{
+  if(!document.getElementById('page-home').classList.contains('active'))return;
+  const el=document.querySelector('.stmt-sec');
+  if(!el)return;
+  const r=el.getBoundingClientRect();
+  const p=Math.max(0,Math.min(1,1-(r.bottom/(window.innerHeight*.7+r.height))));
+  words.forEach((w,i)=>w.classList.toggle('on',i<Math.floor(p*words.length*1.9)));
+},{passive:true});
+</script>
+</body>
+</html>
